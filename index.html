@@ -4,107 +4,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Altın Pınarı | Yönetim Paneli</title>
+    <!-- Use the logo from the parent directory if needed, but assuming it will be in the same folder eventually or using the main site one -->
+    <link rel="icon" href="../logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body class="dark-theme">
-    <!-- Login Overlay -->
-    <div id="login-overlay" class="overlay">
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div id="login-container" class="login-container hidden">
         <div class="login-card">
-            <img src="../altinpinari/logo.png" alt="Logo" class="login-logo">
-            <h2>Yönetim Girişi</h2>
-            <div class="input-group">
-                <label for="email">E-posta</label>
-                <input type="email" id="email" placeholder="admin@altinpinari.com">
-            </div>
-            <div class="input-group">
-                <label for="password">Şifre</label>
-                <input type="password" id="password" placeholder="••••••••">
-            </div>
-            <button id="login-btn" class="primary-btn">Giriş Yap</button>
-            <p id="login-error" class="error-text"></p>
+            <img src="../logo.png" alt="Logo" class="login-logo" onerror="this.src='https://www.altinpinari.com/logo.png'">
+            <h1>Yönetici Girişi</h1>
+            <p>Devam etmek için lütfen giriş yapın.</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" id="email" required placeholder="admin@altinpinari.com">
+                </div>
+                <div class="input-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Giriş Yap</button>
+                <div id="login-error" class="error-text"></div>
+            </form>
         </div>
     </div>
 
-    <!-- Admin Content -->
-    <div id="admin-content" class="hidden">
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="admin-dashboard hidden">
         <header class="admin-header">
             <div class="header-left">
-                <img src="../altinpinari/logo.png" alt="Logo" class="header-logo">
+                <img src="../logo.png" alt="Logo" class="admin-logo" onerror="this.src='https://www.altinpinari.com/logo.png'">
                 <div>
-                    <h1>Altın Pınarı</h1>
-                    <span>Yönetim Paneli</span>
+                    <h2>Altın Pınarı</h2>
+                    <p>Yönetim Paneli <span id="connection-status" style="margin-left:8px; font-size:0.6rem; font-weight:bold;">...</span></p>
                 </div>
             </div>
-            <div class="header-right">
-                <div class="status-indicator">
-                    <span class="dot live"></span> Canlı Veri Aktif
-                </div>
-                <button id="logout-btn" class="secondary-btn">Çıkış Yap</button>
-            </div>
+            <button id="logout-btn" class="btn-outline">Çıkış Yap</button>
         </header>
 
-        <main class="dashboard">
-            <div class="grid-container">
-                <!-- Maintenance Mode Card -->
-                <section class="card maintenance-card">
-                    <div class="card-header">
-                        <div class="icon">🛠️</div>
-                        <h3>Site Durumu</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="toggle-container">
-                            <span class="label">Bakım Modu</span>
-                            <label class="switch">
-                                <input type="checkbox" id="maintenance-toggle">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        <p class="description">Aktifleştirildiğinde kullanıcılar "Bakımdayız" uyarısı görür.</p>
-                    </div>
-                </section>
+        <main class="admin-main">
+            <!-- Alert Section -->
+            <div id="status-alert" class="alert hidden"></div>
 
-                <!-- Global Markup Card -->
-                <section class="card markup-card">
-                    <div class="card-header">
-                        <div class="icon">📈</div>
-                        <h3>Genel Kâr Marjı</h3>
+            <!-- Maintenance Mode Card -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <h3>Site Durumu</h3>
+                    <div class="toggle-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="maintenance-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span id="maintenance-status-label">Normal</span>
                     </div>
-                    <div class="card-body">
-                        <div class="markup-input-group">
-                            <button class="adjust-btn minus" onclick="adjustValue('global-markup', -1)">-</button>
-                            <input type="number" id="global-markup" value="20">
-                            <button class="adjust-btn plus" onclick="adjustValue('global-markup', 1)">+</button>
-                            <span class="unit">TL</span>
-                        </div>
-                        <p class="description">Tüm satış fiyatlarına eklenecek sabit tutar.</p>
-                    </div>
-                </section>
+                </div>
+                <p class="card-desc">Bakım modunu açtığınızda müşteriler fiyatları göremez, sadece bakım ekranını görürler.</p>
+            </section>
 
-                <!-- Product Adjustments Card -->
-                <section class="card products-card full-width">
-                    <div class="card-header">
-                        <div class="icon">💎</div>
-                        <h3>Ürün Bazlı Düzeltmeler</h3>
+            <!-- Global Price Settings -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <h3>Fiyat Ayarları</h3>
+                </div>
+                <div class="settings-grid">
+                    <div class="input-group">
+                        <label for="satis-markup">Genel Kâr Marjı (TL)</label>
+                        <div class="input-with-action">
+                            <input type="number" id="satis-markup" placeholder="Örn: 20">
+                            <button class="btn-inline" onclick="updateConfigField('satisMarkup', 'satis-markup')">Kaydet</button>
+                        </div>
+                        <small>Tüm satış fiyatlarına eklenen sabit tutardır.</small>
                     </div>
-                    <div class="card-body">
-                        <div class="product-grid" id="product-adjustments-list">
+                </div>
+            </section>
+
+            <!-- Price Adjustments -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <h3>Ürün Bazlı Düzeltmeler</h3>
+                </div>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Alış Ayar (TL)</th>
+                                <th>Satış Ayar (TL)</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adjustments-body">
                             <!-- JS ile doldurulacak -->
-                        </div>
-                    </div>
-                </section>
-            </div>
+                            <tr class="loading-row"><td colspan="4">Yükleniyor...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
-
-        <footer class="admin-footer">
-            <p>Değişiklikler anlık olarak web sitesine yansıtılır.</p>
-            <div id="save-status" class="save-status">Tüm değişiklikler kaydedildi.</div>
-        </footer>
     </div>
 
+    <!-- Ensure logic matches the filename admin.js -->
     <script src="admin.js"></script>
 </body>
 </html>
