@@ -1,9 +1,8 @@
-/**
- * ALTIN PINARI - ADMIN.JS
- * Firebase Realtime Database Integration
- */
+/* ============================================
+   ALTIN PINARI KUYUMCULUK - ADMIN ADMIN.JS
+   Firebase Realtime Database Management
+   ============================================ */
 
-// --- FIREBASE CONFIG (USER SHOULD REPLACE THIS) ---
 const firebaseConfig = {
   apiKey: "AIzaSyBlNarV8jgQ2RK1QDxn0mj4XxhTyk2Zf_8",
   authDomain: "altinpinari-panel.firebaseapp.com",
@@ -17,181 +16,179 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
 const auth = firebase.auth();
+const db = firebase.database();
 
-// --- STATE ---
-let configData = {
-    satisMarkup: 20,
-    maintenanceMode: false,
-    satisAdjustment: {}
+// DOM Elements
+const elements = {
+  loading: document.getElementById('loading-overlay'),
+  loginContainer: document.getElementById('login-container'),
+  adminDashboard: document.getElementById('admin-dashboard'),
+  loginForm: document.getElementById('login-form'),
+  loginError: document.getElementById('login-error'),
+  logoutBtn: document.getElementById('logout-btn'),
+  maintenanceToggle: document.getElementById('maintenance-toggle'),
+  maintenanceLabel: document.getElementById('maintenance-status-label'),
+  satisMarkup: document.getElementById('satis-markup'),
+  adjustmentsBody: document.getElementById('adjustments-body'),
+  statusAlert: document.getElementById('status-alert')
 };
 
-const DISPLAY_NAMES = {
-    'C': 'Çeyrek',  'EC': 'Eski Çeyrek',
-    'Y': 'Yarım',   'EY': 'Eski Yarım',
-    'T': 'Teklik',  'ET': 'Eski Teklik',
-    'G': 'Gremse',  'EG': 'Eski Gremse',
-    'A': 'Ata Lira',       'A5': 'Ata Beşli',
-    'R': 'Reşat Altın',    'H': 'Hamit Altın',
-    'GA': 'Gram Altın',    'GAT': 'Gram Toptan',
-    'HH_T': 'Has Altın',   'CH_T': 'Külçe Toptan',
-    'A_T': 'Ata Toptan',   'B': '22 Ayar Bilezik',
-    '18': '18 Ayar Altın', '14': '14 Ayar Altın',
-    'XAUUSD': 'ONS',       'AG_T': 'Gümüş',
-    'G1': 'Gram Altın (1g)',
-    'G5': '24 Ayar 5 Gram',
-    'G10': '24 Ayar 10 Gram',
-    'G20': '24 Ayar 20 Gram',
-    'G50': '24 Ayar 50 Gram',
-    'G100': '24 Ayar 100 Gram'
-};
+// Connection Monitoring
+db.ref(".info/connected").on("value", (snap) => {
+  const statusEl = document.getElementById('connection-status');
+  if (statusEl) {
+    if (snap.val() === true) {
+      statusEl.textContent = 'Bağlı';
+      statusEl.style.color = '#00CC88';
+    } else {
+      statusEl.textContent = 'Bağlantı Kesildi';
+      statusEl.style.color = '#FF4D4D';
+    }
+  }
+});
 
-const PRODUCT_CODES = [
-    'C', 'EC', 'Y', 'EY', 'T', 'ET', 'G', 'EG', 'A', 'A5', 'R', 
-    'G1', 'G5', 'G10', 'G20', 
-    'HH_T', 'CH_T', 'B', '18', '14', 'XAUUSD'
+// --- Auth Monitoring ---
+auth.onAuthStateChanged(user => {
+  if (elements.loading) elements.loading.classList.add('hidden');
+  if (user) {
+    showAdmin(user);
+    console.log("User logged in:", user.email);
+  } else {
+    showLogin();
+  }
+});
+
+// --- Login / Logout ---
+elements.loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  
+  try {
+    elements.loginError.textContent = '';
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (error) {
+    console.error(error);
+    elements.loginError.textContent = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+  }
+});
+
+elements.logoutBtn.addEventListener('click', () => {
+  auth.signOut();
+});
+
+function showLogin() {
+  elements.loginContainer.classList.remove('hidden');
+  elements.adminDashboard.classList.add('hidden');
+}
+
+function showAdmin(user) {
+  elements.loginContainer.classList.add('hidden');
+  elements.adminDashboard.classList.remove('hidden');
+  loadConfig();
+}
+
+// --- Config Management ---
+const codesToAdjust = [
+  { code: 'C', name: 'Çeyrek' },
+  { code: 'Y', name: 'Yarım' },
+  { code: 'T', name: 'Teklik' },
+  { code: 'G', name: 'Gremse' },
+  { code: 'A', name: 'Ata Lira' },
+  { code: 'B', name: '22 Ayar Bilezik' },
+  { code: '14', name: '14 Ayar' },
+  { code: '18', name: '18 Ayar' },
+  { code: 'GA', name: 'Gram Altın' },
+  { code: 'GAT', name: 'Gram Toptan' },
+  { code: 'HH_T', name: 'Has Altın' },
+  { code: 'CH_T', name: 'Külçe Toptan' },
+  { code: 'XAUUSD', name: 'ONS' }
 ];
 
-// --- AUTHENTICATION ---
-const loginOverlay = document.getElementById('login-overlay');
-const adminContent = document.getElementById('admin-content');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const loginBtn = document.getElementById('login-btn');
-const loginError = document.getElementById('login-error');
-const logoutBtn = document.getElementById('logout-btn');
-
-loginBtn.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+async function loadConfig() {
+  db.ref('config').on('value', snapshot => {
+    const data = snapshot.val() || {};
+    console.log("Panel verisi yüklendi:", data);
     
-    try {
-        await auth.signInWithEmailAndPassword(email, password);
-        // Login success handled by onAuthStateChanged
-    } catch (error) {
-        loginError.textContent = "Hatalı giriş! Lütfen bilgilerinizi kontrol edin.";
-        console.error(error);
+    // Maintenance Toggle
+    elements.maintenanceToggle.checked = !!data.maintenanceMode;
+    elements.maintenanceLabel.textContent = data.maintenanceMode ? 'BAKIM MODU AÇIK' : 'Normal';
+    elements.maintenanceLabel.style.color = data.maintenanceMode ? 'var(--error-color)' : 'var(--success-color)';
+    
+    // Markup
+    if (data.satisMarkup !== undefined) {
+      elements.satisMarkup.value = data.satisMarkup;
     }
-});
 
-logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-});
-
-auth.onAuthStateChanged(user => {
-    if (user) {
-        loginOverlay.classList.add('hidden');
-        adminContent.classList.remove('hidden');
-        loadData();
-    } else {
-        loginOverlay.classList.remove('hidden');
-        adminContent.classList.add('hidden');
-    }
-});
-
-// --- DATA LOGIC ---
-function loadData() {
-    db.ref('config').on('value', snapshot => {
-        const data = snapshot.val();
-        if (data) {
-            configData = data;
-            if (!configData.satisAdjustment) configData.satisAdjustment = {};
-            updateUI();
-        } else {
-            // İlk kurulum
-            saveData();
-        }
-    });
+    // Adjustments Table
+    renderAdjustments(data.adjustments || {});
+  }, error => {
+    console.error("Veritabanı okuma hatası:", error);
+    showAlert('Erişim Yetkisi Yok: ' + error.message, 'error');
+  });
 }
 
-function updateUI() {
-    // Maintenance Mode
-    document.getElementById('maintenance-toggle').checked = configData.maintenanceMode;
-    
-    // Global Markup
-    document.getElementById('global-markup').value = configData.satisMarkup;
-    
-    // Product List
-    const list = document.getElementById('product-adjustments-list');
-    list.innerHTML = '';
-    
-    PRODUCT_CODES.forEach(code => {
-        const val = configData.satisAdjustment[code] || 0;
-        const name = DISPLAY_NAMES[code] || code;
-        
-        const item = document.createElement('div');
-        item.className = 'product-item';
-        item.innerHTML = `
-            <div class="product-info">
-                <span class="product-name">${name}</span>
-                <span class="product-code">${code}</span>
-            </div>
-            <div class="product-controls">
-                <button class="adjust-btn minus" onclick="adjustProductValue('${code}', -5)">-</button>
-                <input type="number" value="${val}" onchange="setProductValue('${code}', this.value)">
-                <button class="adjust-btn plus" onclick="adjustProductValue('${code}', 5)">+</button>
-                <span class="unit">TL</span>
-            </div>
-        `;
-        list.appendChild(item);
-    });
+function renderAdjustments(adjustments) {
+  let html = '';
+  codesToAdjust.forEach(item => {
+    const adj = adjustments[item.code] || { alis: 0, satis: 0 };
+    html += `
+      <tr>
+        <td><strong>${item.name}</strong><br><small>${item.code}</small></td>
+        <td><input type="number" id="adj-alis-${item.code}" value="${adj.alis || 0}"></td>
+        <td><input type="number" id="adj-satis-${item.code}" value="${adj.satis || 0}"></td>
+        <td><button class="btn-inline" onclick="saveAdjustment('${item.code}')">✓</button></td>
+      </tr>
+    `;
+  });
+  elements.adjustmentsBody.innerHTML = html;
 }
 
-// --- ACTIONS ---
-window.adjustValue = (id, amount) => {
-    const input = document.getElementById(id);
-    let val = parseInt(input.value) + amount;
-    input.value = val;
+// --- Actions ---
+elements.maintenanceToggle.addEventListener('change', async (e) => {
+  const active = e.target.checked;
+  
+  try {
+    // UI'daki yazıyı hemen değiştir (beklemeden)
+    elements.maintenanceLabel.textContent = active ? 'Yükleniyor...' : 'Yükleniyor...';
     
-    if (id === 'global-markup') {
-        configData.satisMarkup = val;
-    }
-    saveData();
-};
-
-window.adjustProductValue = (code, amount) => {
-    const current = configData.satisAdjustment[code] || 0;
-    configData.satisAdjustment[code] = current + amount;
-    saveData();
-};
-
-window.setProductValue = (code, value) => {
-    configData.satisAdjustment[code] = parseInt(value) || 0;
-    saveData();
-};
-
-document.getElementById('maintenance-toggle').addEventListener('change', (e) => {
-    configData.maintenanceMode = e.target.checked;
-    saveData();
+    await db.ref('config/maintenanceMode').set(active);
+    
+    // Başarılı olduğunda zaten loadConfig tetiklenecek ve label düzelecek
+    showAlert('Site durumu güncellendi.', 'success');
+  } catch (error) {
+    console.error("Bakım modu hatası:", error);
+    // Hata durumunda toggle'ı eski haline getir
+    e.target.checked = !active;
+    loadConfig(); // State'i veritabanından geri çek
+    showAlert('Hata: ' + error.message, 'error');
+  }
 });
 
-document.getElementById('global-markup').addEventListener('change', (e) => {
-    configData.satisMarkup = parseInt(e.target.value) || 0;
-    saveData();
-});
+window.updateConfigField = function(field, inputId) {
+  const value = parseFloat(document.getElementById(inputId).value);
+  if (isNaN(value)) return showAlert('Lütfen geçerli bir sayı girin.', 'error');
+  
+  db.ref('config/' + field).set(value)
+    .then(() => showAlert('Ayarlar kaydedildi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
-let saveTimeout;
-function saveData() {
-    const status = document.getElementById('save-status');
-    status.textContent = "Kaydediliyor...";
-    status.classList.add('show');
-    status.style.color = "var(--gold)";
+window.saveAdjustment = function(code) {
+  const alis = parseFloat(document.getElementById(`adj-alis-${code}`).value) || 0;
+  const satis = parseFloat(document.getElementById(`adj-satis-${code}`).value) || 0;
+  
+  db.ref(`config/adjustments/${code}`).set({ alis, satis })
+    .then(() => showAlert(`${code} ayarları güncellendi.`, 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-        db.ref('config').set(configData)
-            .then(() => {
-                status.textContent = "Tüm değişiklikler kaydedildi.";
-                status.style.color = "var(--success)";
-                setTimeout(() => {
-                    status.classList.remove('show');
-                }, 2000);
-            })
-            .catch(err => {
-                status.textContent = "Hata oluştu!";
-                status.style.color = "var(--error)";
-                console.error(err);
-            });
-    }, 500); // Debounce saves
+function showAlert(msg, type) {
+  elements.statusAlert.textContent = msg;
+  elements.statusAlert.className = `alert ${type}`;
+  elements.statusAlert.classList.remove('hidden');
+  setTimeout(() => {
+    elements.statusAlert.classList.add('hidden');
+  }, 3000);
 }
