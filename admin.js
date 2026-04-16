@@ -92,10 +92,16 @@ function showAdmin(user) {
 // --- Config Management ---
 const codesToAdjust = [
   { code: 'C', name: 'Çeyrek' },
+  { code: 'EC', name: 'Eski Çeyrek' },
   { code: 'Y', name: 'Yarım' },
+  { code: 'EY', name: 'Eski Yarım' },
   { code: 'T', name: 'Teklik' },
+  { code: 'ET', name: 'Eski Teklik' },
   { code: 'G', name: 'Gremse' },
+  { code: 'EG', name: 'Eski Gremse' },
   { code: 'A', name: 'Ata Lira' },
+  { code: 'A5', name: 'Ata Beşli' },
+  { code: 'R', name: 'Reşat Altın' },
   { code: 'B', name: '22 Ayar Bilezik' },
   { code: '14', name: '14 Ayar' },
   { code: '18', name: '18 Ayar' },
