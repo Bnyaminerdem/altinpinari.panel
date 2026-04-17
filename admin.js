@@ -93,12 +93,38 @@ function showAdmin(user) {
 // --- Live Visitor Tracking ---
 function trackLiveVisitors() {
   db.ref('presence').on('value', snapshot => {
-    const count = snapshot.numChildren();
     const onlineEl = document.getElementById('online-count');
+    const locationEl = document.getElementById('visitor-locations');
+    
+    if (!snapshot.exists()) {
+      if (onlineEl) onlineEl.textContent = '0';
+      if (locationEl) locationEl.innerHTML = '<span class="empty-list">Kimse yok</span>';
+      return;
+    }
+
+    const visitors = snapshot.val();
+    const count = snapshot.numChildren();
+    
+    // Count by city
+    const cityCounts = {};
+    Object.values(visitors).forEach(v => {
+      const city = v.city || 'Bilinmiyor';
+      cityCounts[city] = (cityCounts[city] || 0) + 1;
+    });
+
+    // Update count
     if (onlineEl) {
       onlineEl.textContent = count;
       onlineEl.style.transform = 'scale(1.1)';
       setTimeout(() => onlineEl.style.transform = 'scale(1)', 200);
+    }
+
+    // Update locations list
+    if (locationEl) {
+      const locationHtml = Object.entries(cityCounts)
+        .map(([city, num]) => `<strong>${city}</strong>${num > 1 ? ` (${num})` : ''}`)
+        .join(', ');
+      locationEl.innerHTML = locationHtml || '<span class="empty-list">Bilinmiyor</span>';
     }
   });
 }

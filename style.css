@@ -267,6 +267,24 @@ body {
     margin-top: 5px;
 }
 
+.location-list {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.location-list strong {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.empty-list {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
 /* --- Cards --- */
 .admin-card {
   background: var(--card-bg);
