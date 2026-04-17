@@ -87,6 +87,20 @@ function showAdmin(user) {
   elements.loginContainer.classList.add('hidden');
   elements.adminDashboard.classList.remove('hidden');
   loadConfig();
+  trackLiveVisitors();
+}
+
+// --- Live Visitor Tracking ---
+function trackLiveVisitors() {
+  db.ref('presence').on('value', snapshot => {
+    const count = snapshot.numChildren();
+    const onlineEl = document.getElementById('online-count');
+    if (onlineEl) {
+      onlineEl.textContent = count;
+      onlineEl.style.transform = 'scale(1.1)';
+      setTimeout(() => onlineEl.style.transform = 'scale(1)', 200);
+    }
+  });
 }
 
 // --- Config Management ---
