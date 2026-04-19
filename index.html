@@ -215,6 +215,20 @@
                             <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('mobile', 'color')">Rengi Kaydet</button>
                         </div>
                     </div>
+
+                    <!-- EKSTRA AYARLAR -->
+                    <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <h4 style="color: var(--primary);">Trend Gösterimi (Siyah/Beyaz Mod)</h4>
+                            <p class="card-desc">Siyah/Beyaz mod aktifken trend renklerini ve oklarını göster.</p>
+                        </div>
+                        <div class="toggle-switch">
+                            <label class="switch">
+                                <input type="checkbox" id="show-trends-toggle" onchange="saveAppearanceToggle('showTrendsInStaticMode', this.checked)">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

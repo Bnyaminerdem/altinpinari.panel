@@ -173,6 +173,7 @@ async function loadConfig() {
       if (document.getElementById('color-select-medium')) document.getElementById('color-select-medium').value = data.appearance.mediumColor || 'colored';
       if (document.getElementById('font-select-mobile')) document.getElementById('font-select-mobile').value = data.appearance.mobileFont || 'standard';
       if (document.getElementById('color-select-mobile')) document.getElementById('color-select-mobile').value = data.appearance.mobileColor || 'colored';
+      if (document.getElementById('show-trends-toggle')) document.getElementById('show-trends-toggle').checked = !!data.appearance.showTrendsInStaticMode;
     }
 
     // Adjustments Table
@@ -182,6 +183,12 @@ async function loadConfig() {
     showAlert('Erişim Yetkisi Yok: ' + error.message, 'error');
   });
 }
+
+window.saveAppearanceToggle = function(field, value) {
+  db.ref('config/appearance/' + field).set(value)
+    .then(() => showAlert('Ayar güncellendi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
 window.saveAppearance = function(mode, type) {
   const elementId = type === 'font' ? `font-select-${mode}` : `color-select-${mode}`;
