@@ -29,6 +29,9 @@ const elements = {
   logoutBtn: document.getElementById('logout-btn'),
   maintenanceToggle: document.getElementById('maintenance-toggle'),
   maintenanceLabel: document.getElementById('maintenance-status-label'),
+  fontToggle: document.getElementById('font-toggle'),
+  fontLabel: document.getElementById('font-status-label'),
+  priceColorSelect: document.getElementById('price-color-select'),
   satisMarkup: document.getElementById('satis-markup'),
   adjustmentsBody: document.getElementById('adjustments-body'),
   statusAlert: document.getElementById('status-alert')
@@ -167,6 +170,18 @@ async function loadConfig() {
       elements.satisMarkup.value = data.satisMarkup;
     }
 
+    // Font Toggle
+    if (elements.fontToggle) {
+      elements.fontToggle.checked = !!data.useSpecialFont;
+      elements.fontLabel.textContent = data.useSpecialFont ? 'Oswald Font (Açık)' : 'Oswald Font (Kapalı)';
+      elements.fontLabel.style.color = data.useSpecialFont ? 'var(--primary-color)' : 'var(--text-secondary)';
+    }
+
+    // Price Color Select
+    if (elements.priceColorSelect && data.priceColorMode) {
+      elements.priceColorSelect.value = data.priceColorMode;
+    }
+
     // Adjustments Table
     renderAdjustments(data.adjustments || {});
   }, error => {
@@ -211,6 +226,25 @@ elements.maintenanceToggle.addEventListener('change', async (e) => {
     showAlert('Hata: ' + error.message, 'error');
   }
 });
+
+elements.fontToggle.addEventListener('change', async (e) => {
+  const active = e.target.checked;
+  try {
+    await db.ref('config/useSpecialFont').set(active);
+    showAlert('Font ayarı güncellendi.', 'success');
+  } catch (error) {
+    console.error("Font ayar hatası:", error);
+    e.target.checked = !active;
+    showAlert('Hata: ' + error.message, 'error');
+  }
+});
+
+window.savePriceColor = function() {
+  const val = elements.priceColorSelect.value;
+  db.ref('config/priceColorMode').set(val)
+    .then(() => showAlert('Renk ayarı kaydedildi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
 window.updateConfigField = function(field, inputId) {
   const value = parseFloat(document.getElementById(inputId).value);

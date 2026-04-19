@@ -93,6 +93,33 @@
                 <p class="card-desc">Bakım modunu açtığınızda müşteriler fiyatları göremez, sadece bakım ekranını görürler.</p>
             </section>
 
+            <!-- Görünüm Ayarları -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <h3>Görünüm Ayarları</h3>
+                    <div class="toggle-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="font-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span id="font-status-label">Standart Font</span>
+                    </div>
+                </div>
+                <p class="card-desc">Orta boyut (TV) modunda fiyatların daha kalın/büyük fontla (Oswald) görünmesini sağlar.</p>
+                
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="price-color-select">Fiyat Renk Modu (Orta Boyut)</label>
+                    <div class="input-with-action">
+                        <select id="price-color-select" style="flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); color: white; padding: 10px; border-radius: 8px;">
+                            <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
+                            <option value="black">Siyah</option>
+                            <option value="white">Beyaz</option>
+                        </select>
+                        <button class="btn-inline" onclick="savePriceColor()">Kaydet</button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Global Price Settings -->
             <section class="admin-card">
                 <div class="card-header">
