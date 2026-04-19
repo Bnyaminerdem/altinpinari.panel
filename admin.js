@@ -227,16 +227,19 @@ elements.maintenanceToggle.addEventListener('change', async (e) => {
   }
 });
 
-elements.fontToggle.addEventListener('change', async (e) => {
-  const active = e.target.checked;
-  try {
-    await db.ref('config/useSpecialFont').set(active);
-    showAlert('Font ayarı güncellendi.', 'success');
-  } catch (error) {
-    console.error("Font ayar hatası:", error);
-    e.target.checked = !active;
-    showAlert('Hata: ' + error.message, 'error');
-  }
+elements.fontToggle.addEventListener('click', async (e) => {
+  // Click olayında henüz checked durumu değişmemiş olabilir, o yüzden ufak bir gecikme veya mevcut durumu alalım
+  setTimeout(async () => {
+    const active = elements.fontToggle.checked;
+    try {
+      await db.ref('config/useSpecialFont').set(active);
+      showAlert('Font ayarı güncellendi.', 'success');
+    } catch (error) {
+      console.error("Font ayar hatası:", error);
+      elements.fontToggle.checked = !active;
+      showAlert('Hata: ' + error.message, 'error');
+    }
+  }, 50);
 });
 
 window.savePriceColor = function() {
@@ -272,3 +275,25 @@ function showAlert(msg, type) {
     elements.statusAlert.classList.add('hidden');
   }, 3000);
 }
+
+// --- Section Switching Logic ---
+window.switchSection = function(sectionId, navElement) {
+  // Tüm bölümleri gizle
+  document.querySelectorAll('.content-section').forEach(section => {
+    section.classList.remove('active');
+  });
+  
+  // Seçilen bölümü göster
+  const targetSection = document.getElementById(sectionId);
+  if (targetSection) {
+    targetSection.classList.add('active');
+  }
+
+  // Menü öğelerini güncelle (aktif sınıfı)
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  if (navElement) {
+    navElement.classList.add('active');
+  }
+};

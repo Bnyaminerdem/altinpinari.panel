@@ -43,122 +43,147 @@
     </div>
 
     <!-- Admin Dashboard -->
+    <!-- Admin Dashboard -->
     <div id="admin-dashboard" class="admin-dashboard hidden">
-        <header class="admin-header">
-            <div class="header-left">
-                <img src="../logo.png" alt="Logo" class="admin-logo" onerror="this.src='https://www.altinpinari.com/logo.png'">
-                <div>
-                    <h2>Altın Pınarı</h2>
-                    <p>Yönetim Paneli <span id="connection-status" style="margin-left:8px; font-size:0.6rem; font-weight:bold;">...</span></p>
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo-group">
+                    <img src="../logo.png" alt="Logo" class="sidebar-logo" onerror="this.src='https://www.altinpinari.com/logo.png'">
+                    <div class="sidebar-title">
+                        <h2>Altın Pınarı</h2>
+                        <p>Yönetim Paneli</p>
+                    </div>
                 </div>
             </div>
-            <button id="logout-btn" class="btn-outline">Çıkış Yap</button>
-        </header>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item active" onclick="switchSection('section-overview', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Genel Bakış</span>
+                </div>
+                <div class="nav-item" onclick="switchSection('section-prices', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Fiyat Ayarları</span>
+                </div>
+                <div class="nav-item" onclick="switchSection('section-appearance', this)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                    <span>Görünüm Ayarları</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-outline" style="width: 100%;">Güvenli Çıkış</button>
+                <div id="connection-status" style="font-size: 0.7rem; text-align: center; margin-top: 10px;">Bağlanıyor...</div>
+            </div>
+        </aside>
 
         <main class="admin-main">
-            <!-- Alert Section -->
             <div id="status-alert" class="alert hidden"></div>
 
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-info">
-                        <span class="stat-label">Anlık Ziyaretçi</span>
-                        <h2 id="online-count">0</h2>
+            <!-- SECTION 1: OVERVIEW -->
+            <div id="section-overview" class="content-section active">
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Anlık Ziyaretçi</span>
+                            <h2 id="online-count">0</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📍</div>
-                    <div class="stat-info">
-                        <span class="stat-label">Aktif Konumlar</span>
-                        <div id="visitor-locations" class="location-list">
-                            <span class="empty-list">Bekleniyor...</span>
+                    <div class="stat-card">
+                        <div class="stat-icon">📍</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Aktif Konumlar</span>
+                            <div id="visitor-locations" class="location-list">
+                                <span class="empty-list">Bekleniyor...</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <section class="admin-card">
+                    <div class="card-header">
+                        <h3>Site Durumu</h3>
+                        <div class="toggle-switch">
+                            <label class="switch">
+                                <input type="checkbox" id="maintenance-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span id="maintenance-status-label">Normal</span>
+                        </div>
+                    </div>
+                    <p class="card-desc">Bakım modunu açtığınızda müşteriler fiyatları göremez.</p>
+                </section>
             </div>
 
-            <!-- Maintenance Mode Card -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <h3>Site Durumu</h3>
-                    <div class="toggle-switch">
-                        <label class="switch">
-                            <input type="checkbox" id="maintenance-toggle">
-                            <span class="slider round"></span>
-                        </label>
-                        <span id="maintenance-status-label">Normal</span>
+            <!-- SECTION 2: PRICES -->
+            <div id="section-prices" class="content-section">
+                <section class="admin-card">
+                    <div class="card-header">
+                        <h3>Genel Fiyat Ayarı</h3>
                     </div>
-                </div>
-                <p class="card-desc">Bakım modunu açtığınızda müşteriler fiyatları göremez, sadece bakım ekranını görürler.</p>
-            </section>
-
-            <!-- Görünüm Ayarları -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <h3>Görünüm Ayarları</h3>
-                    <div class="toggle-switch">
-                        <label class="switch">
-                            <input type="checkbox" id="font-toggle">
-                            <span class="slider round"></span>
-                        </label>
-                        <span id="font-status-label">Standart Font</span>
-                    </div>
-                </div>
-                <p class="card-desc">Orta boyut (TV) modunda fiyatların daha kalın/büyük fontla (Oswald) görünmesini sağlar.</p>
-                
-                <div class="input-group" style="margin-top: 20px;">
-                    <label for="price-color-select">Fiyat Renk Modu (Orta Boyut)</label>
-                    <div class="input-with-action">
-                        <select id="price-color-select" style="flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); color: white; padding: 10px; border-radius: 8px;">
-                            <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
-                            <option value="black">Siyah</option>
-                            <option value="white">Beyaz</option>
-                        </select>
-                        <button class="btn-inline" onclick="savePriceColor()">Kaydet</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Global Price Settings -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <h3>Fiyat Ayarları</h3>
-                </div>
-                <div class="settings-grid">
-                    <div class="input-group">
-                        <label for="satis-markup">Genel Kâr Marjı (TL)</label>
-                        <div class="input-with-action">
-                            <input type="number" id="satis-markup" placeholder="Örn: 20">
-                            <button class="btn-inline" onclick="updateConfigField('satisMarkup', 'satis-markup')">Kaydet</button>
+                    <div class="settings-grid">
+                        <div class="input-group">
+                            <label for="satis-markup">Genel Kâr Marjı (TL)</label>
+                            <div class="input-with-action">
+                                <input type="number" id="satis-markup" placeholder="Örn: 20">
+                                <button class="btn-inline" onclick="updateConfigField('satisMarkup', 'satis-markup')">Kaydet</button>
+                            </div>
+                            <small>Tüm satış fiyatlarına eklenen sabit tutardır.</small>
                         </div>
-                        <small>Tüm satış fiyatlarına eklenen sabit tutardır.</small>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Price Adjustments -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <h3>Ürün Bazlı Düzeltmeler</h3>
-                </div>
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Ürün</th>
-                                <th>Alış Ayar (TL)</th>
-                                <th>Satış Ayar (TL)</th>
-                                <th>İşlem</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adjustments-body">
-                            <!-- JS ile doldurulacak -->
-                            <tr class="loading-row"><td colspan="4">Yükleniyor...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                <section class="admin-card">
+                    <div class="card-header">
+                        <h3>Ürün Bazlı Düzeltmeler</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Alış Ayar (TL)</th>
+                                    <th>Satış Ayar (TL)</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adjustments-body">
+                                <tr class="loading-row"><td colspan="4">Yükleniyor...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECTION 3: APPEARANCE -->
+            <div id="section-appearance" class="content-section">
+                <section class="admin-card">
+                    <div class="card-header">
+                        <h3>Görünüm Ayarları (Orta Boyut)</h3>
+                        <div class="toggle-switch">
+                            <label class="switch">
+                                <input type="checkbox" id="font-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span id="font-status-label">Font Ayarı</span>
+                        </div>
+                    </div>
+                    <p class="card-desc">Fiyatların kalın (Oswald) fontla görünmesini sağlar.</p>
+                    
+                    <div class="input-group" style="margin-top: 20px;">
+                        <label for="price-color-select">Fiyat Renk Modu</label>
+                        <div class="input-with-action">
+                            <select id="price-color-select" style="flex: 1; background: var(--input-bg); border: 1px solid var(--input-border); color: white; padding: 10px; border-radius: 8px;">
+                                <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
+                                <option value="black">Siyah</option>
+                                <option value="white">Beyaz</option>
+                            </select>
+                            <button class="btn-inline" onclick="savePriceColor()">Kaydet</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
