@@ -174,6 +174,9 @@ async function loadConfig() {
       if (document.getElementById('font-select-mobile')) document.getElementById('font-select-mobile').value = data.appearance.mobileFont || 'standard';
       if (document.getElementById('color-select-mobile')) document.getElementById('color-select-mobile').value = data.appearance.mobileColor || 'colored';
       if (document.getElementById('show-trends-toggle')) document.getElementById('show-trends-toggle').checked = !!data.appearance.showTrendsInStaticMode;
+      
+      // Ürün Görünürlüğü Gridini Oluştur
+      renderProductVisibilityGrid(data.appearance.mediumProductVisibility || {});
     }
 
     // Adjustments Table
@@ -183,6 +186,37 @@ async function loadConfig() {
     showAlert('Erişim Yetkisi Yok: ' + error.message, 'error');
   });
 }
+
+function renderProductVisibilityGrid(visibility) {
+  const grid = document.getElementById('product-visibility-grid');
+  if (!grid) return;
+
+  // Görünmesini istediğimiz ürünler
+  const items = codesToAdjust;
+
+  let html = '';
+  items.forEach(item => {
+    const isVisible = visibility[item.code] !== false; // Varsayılan açık
+    html += `
+      <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 0.75rem; font-weight: 600;">${item.name}</span>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" ${isVisible ? 'checked' : ''} onchange="saveProductVisibility('${item.code}', this.checked)">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    `;
+  });
+  grid.innerHTML = html;
+}
+
+window.saveProductVisibility = function(code, isVisible) {
+  db.ref(`config/appearance/mediumProductVisibility/${code}`).set(isVisible)
+    .then(() => showAlert('Ürün görünürlüğü güncellendi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
 window.saveAppearanceToggle = function(field, value) {
   db.ref('config/appearance/' + field).set(value)

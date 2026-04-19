@@ -183,10 +183,21 @@
                                 <option value="black">Siyah</option>
                                 <option value="white">Beyaz</option>
                             </select>
-                            <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('medium', 'color')">Rengi Kaydet</button>
-                        </div>
+                        <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('medium', 'color')">Rengi Kaydet</button>
                     </div>
                 </div>
+
+                <!-- ÜRÜN GÖRÜNÜRLÜĞÜ (ORTA BOYUT) -->
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">Ürün Görünürlüğü (TV/PC Paneli)</h4>
+                    <p class="card-desc" style="margin-bottom: 20px;">Orta boyutta (TV ekranında) hangi ürünlerin gösterileceğini seçin.</p>
+                    
+                    <div id="product-visibility-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+                        <!-- JS ile doldurulacak -->
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">Yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
 
                 <!-- MOBİL / GENEL -->
                 <div class="admin-card" style="margin-top: 20px;">
