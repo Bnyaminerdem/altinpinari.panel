@@ -161,16 +161,19 @@
 
                 <div class="admin-card">
                     <div class="card-header">
-                        <h3>Özel Font (Oswald)</h3>
-                        <div class="toggle-switch">
-                            <label class="switch">
-                                <input type="checkbox" id="font-toggle">
-                                <span class="slider round"></span>
-                            </label>
-                            <span id="font-status-label">Font Ayarı</span>
-                        </div>
+                        <h3>Fiyat Fontu (Orta Boyut)</h3>
                     </div>
-                    <p class="card-desc">Fiyatların kalın ve büyük (Oswald) fontla görünmesini sağlar.</p>
+                    <div class="color-select-group">
+                        <select id="font-family-select" class="custom-select">
+                            <option value="standard">Standart (Inter)</option>
+                            <option value="oswald">Oswald (Sert & Yoğun)</option>
+                            <option value="bebas-neue">Bebas Neue (Uzun & Lüks)</option>
+                            <option value="anton">Anton (Çok Kalın)</option>
+                            <option value="roboto-condensed">Roboto Condensed (Net)</option>
+                        </select>
+                        <button class="btn-primary" onclick="saveFontFamily()">Fontu Uygula</button>
+                    </div>
+                    <p class="card-desc" style="margin-top:10px">Seçilen font sadece orta boyutta ve mobilin bazı kısımlarında geçerli olur.</p>
                 </div>
 
                 <div class="admin-card">

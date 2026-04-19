@@ -242,6 +242,13 @@ elements.fontToggle.addEventListener('click', async (e) => {
   }, 50);
 });
 
+window.saveFontFamily = function() {
+  const val = document.getElementById('font-family-select').value;
+  db.ref('config/selectedFont').set(val)
+    .then(() => showAlert('Font ayarı kaydedildi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
+
 window.savePriceColor = function() {
   const val = elements.priceColorSelect.value;
   db.ref('config/priceColorMode').set(val)
