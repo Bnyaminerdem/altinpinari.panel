@@ -26,6 +26,87 @@ body {
 
 .hidden { display: none !important; }
 
+/* --- PREMIUM GİRİŞ EKRANI (LOGIN) --- */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: radial-gradient(circle at top right, #1a1d29, #0c0e14);
+  position: fixed;
+  top: 0; left: 0; width: 100%; z-index: 2000;
+}
+
+.login-card {
+  background: rgba(26, 29, 41, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 50px 40px;
+  border-radius: 32px;
+  border: 1px solid rgba(184, 134, 11, 0.25);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  animation: cardShow 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardShow {
+  from { opacity: 0; transform: scale(0.9) translateY(30px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.login-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 30px;
+  border-radius: 30%; /* Daha modern bir köşe yapısı */
+  padding: 10px;
+  background: linear-gradient(135deg, var(--primary), #8b6508);
+  box-shadow: 0 10px 30px rgba(184, 134, 11, 0.3);
+}
+
+.login-card h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(to bottom, #fff, #b8860b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.login-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 40px;
+}
+
+.login-card .input-group { text-align: left; }
+.login-card label { color: #fff; font-weight: 500; margin-bottom: 8px; display: block; }
+.login-card input {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  transition: 0.3s !important;
+}
+
+.login-card input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 15px rgba(184, 134, 11, 0.25) !important;
+}
+
+.login-card .btn-primary {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--primary), #8b6508);
+  border-radius: 12px;
+}
+
 /* DÜZEN (LAYOUT) */
 .admin-dashboard {
   display: flex;
