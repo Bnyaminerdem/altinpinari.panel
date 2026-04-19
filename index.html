@@ -156,35 +156,64 @@
             <div id="section-appearance" class="content-section">
                 <div class="page-header">
                     <h1>Görünüm Ayarları</h1>
-                    <p>Site stilini ve fontları dinamik olarak değiştirin.</p>
+                    <p>Site stilini ve fontları TV ve Mobil için ayrı ayrı yönetin.</p>
                 </div>
 
+                <!-- ORTA BOYUT (TV/PC) -->
                 <div class="admin-card">
                     <div class="card-header">
-                        <h3>Fiyat Fontu (Orta Boyut)</h3>
+                        <h3>Orta Boyut / TV Ayarları</h3>
                     </div>
-                    <div class="color-select-group">
-                        <select id="font-family-select" class="custom-select">
-                            <option value="standard">Standart (Inter)</option>
-                            <option value="oswald">Oswald (Sert & Yoğun)</option>
-                            <option value="bebas-neue">Bebas Neue (Uzun & Lüks)</option>
-                            <option value="anton">Anton (Çok Kalın)</option>
-                            <option value="roboto-condensed">Roboto Condensed (Net)</option>
-                        </select>
-                        <button class="btn-primary" onclick="saveFontFamily()">Fontu Uygula</button>
+                    <div class="settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="input-group">
+                            <label>Font Seçimi (Orta Boyut)</label>
+                            <select id="font-select-medium" class="custom-select" style="width: 100%;">
+                                <option value="standard">Standart (Inter)</option>
+                                <option value="oswald">Oswald (Sert & Yoğun)</option>
+                                <option value="bebas-neue">Bebas Neue (Uzun & Lüks)</option>
+                                <option value="anton">Anton (Çok Kalın)</option>
+                                <option value="roboto-condensed">Roboto Condensed</option>
+                            </select>
+                            <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('medium', 'font')">Fontu Kaydet</button>
+                        </div>
+                        <div class="input-group">
+                            <label>Fiyat Renk Modu (Orta Boyut)</label>
+                            <select id="color-select-medium" class="custom-select" style="width: 100%;">
+                                <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
+                                <option value="black">Siyah</option>
+                                <option value="white">Beyaz</option>
+                            </select>
+                            <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('medium', 'color')">Rengi Kaydet</button>
+                        </div>
                     </div>
-                    <p class="card-desc" style="margin-top:10px">Seçilen font sadece orta boyutta ve mobilin bazı kısımlarında geçerli olur.</p>
                 </div>
 
-                <div class="admin-card">
-                    <div class="card-header"><h3>Fiyat Renk Modu</h3></div>
-                    <div class="color-select-group">
-                        <select id="price-color-select" class="custom-select">
-                            <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
-                            <option value="black">Siyah</option>
-                            <option value="white">Beyaz</option>
-                        </select>
-                        <button class="btn-primary" onclick="savePriceColor()">Rengi Uygula</button>
+                <!-- MOBİL / GENEL -->
+                <div class="admin-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3>Mobil / Genel Ayarlar</h3>
+                    </div>
+                    <div class="settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="input-group">
+                            <label>Font Seçimi (Mobil)</label>
+                            <select id="font-select-mobile" class="custom-select" style="width: 100%;">
+                                <option value="standard">Standart (Inter)</option>
+                                <option value="oswald">Oswald (Sert & Yoğun)</option>
+                                <option value="bebas-neue">Bebas Neue</option>
+                                <option value="anton">Anton</option>
+                                <option value="roboto-condensed">Roboto Condensed</option>
+                            </select>
+                            <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('mobile', 'font')">Fontu Kaydet</button>
+                        </div>
+                        <div class="input-group">
+                            <label>Fiyat Renk Modu (Mobil)</label>
+                            <select id="color-select-mobile" class="custom-select" style="width: 100%;">
+                                <option value="colored">Yeşil / Kırmızı (Piyasa)</option>
+                                <option value="black">Siyah</option>
+                                <option value="white">Beyaz</option>
+                            </select>
+                            <button class="btn-primary" style="margin-top:10px; width: 100%;" onclick="saveAppearance('mobile', 'color')">Rengi Kaydet</button>
+                        </div>
                     </div>
                 </div>
             </div>

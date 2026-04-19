@@ -29,8 +29,6 @@ const elements = {
   logoutBtn: document.getElementById('logout-btn'),
   maintenanceToggle: document.getElementById('maintenance-toggle'),
   maintenanceLabel: document.getElementById('maintenance-status-label'),
-  fontFamilySelect: document.getElementById('font-family-select'),
-  priceColorSelect: document.getElementById('price-color-select'),
   satisMarkup: document.getElementById('satis-markup'),
   adjustmentsBody: document.getElementById('adjustments-body'),
   statusAlert: document.getElementById('status-alert')
@@ -169,14 +167,12 @@ async function loadConfig() {
       elements.satisMarkup.value = data.satisMarkup;
     }
 
-    // Font Seçimi
-    if (elements.fontFamilySelect && data.selectedFont) {
-      elements.fontFamilySelect.value = data.selectedFont;
-    }
-
-    // Price Color Select
-    if (elements.priceColorSelect && data.priceColorMode) {
-      elements.priceColorSelect.value = data.priceColorMode;
+    // Görünüm Ayarları (Yeni - Ayrı ayrı)
+    if (data.appearance) {
+      if (document.getElementById('font-select-medium')) document.getElementById('font-select-medium').value = data.appearance.mediumFont || 'standard';
+      if (document.getElementById('color-select-medium')) document.getElementById('color-select-medium').value = data.appearance.mediumColor || 'colored';
+      if (document.getElementById('font-select-mobile')) document.getElementById('font-select-mobile').value = data.appearance.mobileFont || 'standard';
+      if (document.getElementById('color-select-mobile')) document.getElementById('color-select-mobile').value = data.appearance.mobileColor || 'colored';
     }
 
     // Adjustments Table
@@ -186,6 +182,16 @@ async function loadConfig() {
     showAlert('Erişim Yetkisi Yok: ' + error.message, 'error');
   });
 }
+
+window.saveAppearance = function(mode, type) {
+  const elementId = type === 'font' ? `font-select-${mode}` : `color-select-${mode}`;
+  const value = document.getElementById(elementId).value;
+  const dbPath = type === 'font' ? `appearance/${mode}Font` : `appearance/${mode}Color`;
+  
+  db.ref('config/' + dbPath).set(value)
+    .then(() => showAlert('Görünüm ayarı kaydedildi.', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
 
 function renderAdjustments(adjustments) {
   let html = '';
@@ -226,19 +232,8 @@ elements.maintenanceToggle.addEventListener('change', async (e) => {
 
 // Font ve Renk Ayarları Kaydetme İşlemleri butonlar üzerinden (window.saveFontFamily vb.) yürütülmektedir.
 
-window.saveFontFamily = function() {
-  const val = document.getElementById('font-family-select').value;
-  db.ref('config/selectedFont').set(val)
-    .then(() => showAlert('Font ayarı kaydedildi.', 'success'))
-    .catch(err => showAlert('Hata: ' + err.message, 'error'));
-};
+// Font ve Renk Ayarları Kaydetme İşlemleri saveAppearance üzerinden yürütülmektedir.
 
-window.savePriceColor = function() {
-  const val = elements.priceColorSelect.value;
-  db.ref('config/priceColorMode').set(val)
-    .then(() => showAlert('Renk ayarı kaydedildi.', 'success'))
-    .catch(err => showAlert('Hata: ' + err.message, 'error'));
-};
 
 window.updateConfigField = function(field, inputId) {
   const value = parseFloat(document.getElementById(inputId).value);
