@@ -29,8 +29,7 @@ const elements = {
   logoutBtn: document.getElementById('logout-btn'),
   maintenanceToggle: document.getElementById('maintenance-toggle'),
   maintenanceLabel: document.getElementById('maintenance-status-label'),
-  fontToggle: document.getElementById('font-toggle'),
-  fontLabel: document.getElementById('font-status-label'),
+  fontFamilySelect: document.getElementById('font-family-select'),
   priceColorSelect: document.getElementById('price-color-select'),
   satisMarkup: document.getElementById('satis-markup'),
   adjustmentsBody: document.getElementById('adjustments-body'),
@@ -170,11 +169,9 @@ async function loadConfig() {
       elements.satisMarkup.value = data.satisMarkup;
     }
 
-    // Font Toggle
-    if (elements.fontToggle) {
-      elements.fontToggle.checked = !!data.useSpecialFont;
-      elements.fontLabel.textContent = data.useSpecialFont ? 'Oswald Font (Açık)' : 'Oswald Font (Kapalı)';
-      elements.fontLabel.style.color = data.useSpecialFont ? 'var(--primary-color)' : 'var(--text-secondary)';
+    // Font Seçimi
+    if (elements.fontFamilySelect && data.selectedFont) {
+      elements.fontFamilySelect.value = data.selectedFont;
     }
 
     // Price Color Select
@@ -227,20 +224,7 @@ elements.maintenanceToggle.addEventListener('change', async (e) => {
   }
 });
 
-elements.fontToggle.addEventListener('click', async (e) => {
-  // Click olayında henüz checked durumu değişmemiş olabilir, o yüzden ufak bir gecikme veya mevcut durumu alalım
-  setTimeout(async () => {
-    const active = elements.fontToggle.checked;
-    try {
-      await db.ref('config/useSpecialFont').set(active);
-      showAlert('Font ayarı güncellendi.', 'success');
-    } catch (error) {
-      console.error("Font ayar hatası:", error);
-      elements.fontToggle.checked = !active;
-      showAlert('Hata: ' + error.message, 'error');
-    }
-  }, 50);
-});
+// Font ve Renk Ayarları Kaydetme İşlemleri butonlar üzerinden (window.saveFontFamily vb.) yürütülmektedir.
 
 window.saveFontFamily = function() {
   const val = document.getElementById('font-family-select').value;
