@@ -252,8 +252,12 @@ body {
 }
 
 .nav-item svg {
-  width: 20px;
-  height: 20px;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px;
+  min-height: 20px;
+  stroke: currentColor;
+  display: block;
 }
 
 .sidebar-footer {
@@ -266,15 +270,22 @@ body {
   padding: 40px;
   overflow-y: auto;
   background-color: var(--bg-color);
+  width: 100%;
+  display: block;
+  position: relative;
 }
 
 .content-section {
-  display: none;
-  animation: fadeIn 0.3s ease-in-out;
+  display: none !important;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s, transform 0.3s;
 }
 
 .content-section.active {
-  display: block;
+  display: block !important;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @keyframes fadeIn {
