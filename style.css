@@ -345,3 +345,128 @@ input:checked + .slider:before { transform: translateX(22px); }
 .alert { padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
 .alert.success { background: rgba(0, 204, 136, 0.1); color: var(--success); border: 1px solid var(--success); }
 .alert.error { background: rgba(255, 77, 77, 0.1); color: var(--error); border: 1px solid var(--error); }
+
+/* ============================================
+   TV EKRAN DÜZENİ EDITÖRÜ
+   ============================================ */
+
+/* Önizleme Grid */
+.tv-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+  background: #0C0E14;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #2A2F3E;
+  min-height: 160px;
+}
+
+.tv-preview-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tv-preview-zone {
+  background: rgba(255,255,255,0.04);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 10px;
+  transition: border-color 0.4s;
+  min-height: 60px;
+}
+
+.tv-preview-zone .zone-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tv-preview-zone .zone-content-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+
+/* Bölge Ayarları Grid */
+.layout-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.layout-zone-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.zone-icon {
+  font-size: 1.8rem;
+  opacity: 0.5;
+}
+
+.zone-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.layout-zone-card .custom-select {
+  width: 100%;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* Input group genel */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.input-group input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+@media (max-width: 900px) {
+  .layout-zones-grid {
+    grid-template-columns: 1fr;
+  }
+  .tv-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}

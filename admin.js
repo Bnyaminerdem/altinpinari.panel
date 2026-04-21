@@ -183,6 +183,9 @@ async function loadConfig() {
       renderProductVisibilityGrid(data.appearance.mediumProductVisibility || {});
     }
 
+    // TV Ekran Düzeni Yükle
+    loadLayoutSettings(data.tvLayout || {});
+
     // Adjustments Table
     renderAdjustments(data.adjustments || {});
   }, error => {
@@ -327,4 +330,100 @@ window.switchSection = function(sectionId, navElement) {
   if (navElement) {
     navElement.classList.add('active');
   }
+};
+
+// --- TV Layout Yönetimi ---
+const WIDGET_LABELS = {
+  sarrafiye: 'Sarrafiye Tablosu',
+  gram: 'Gram Altın Tablosu',
+  altin: 'ONS / Has Altın',
+  iban: 'IBAN / Banka Bilgileri',
+  youtube: 'YouTube Video',
+  gizli: 'Gizli (Boş)'
+};
+
+function loadLayoutSettings(layout) {
+  const leftEl = document.getElementById('layout-zone-left');
+  const topEl = document.getElementById('layout-zone-topright');
+  const botEl = document.getElementById('layout-zone-bottomright');
+  const ytEl = document.getElementById('youtube-url-input');
+  const b1name = document.getElementById('iban-bank1-name');
+  const b1iban = document.getElementById('iban-bank1-iban');
+  const b2name = document.getElementById('iban-bank2-name');
+  const b2iban = document.getElementById('iban-bank2-iban');
+  const accName = document.getElementById('iban-account-name');
+
+  if (leftEl && layout.zoneLeft) leftEl.value = layout.zoneLeft;
+  if (topEl && layout.zoneTopRight) topEl.value = layout.zoneTopRight;
+  if (botEl && layout.zoneBottomRight) botEl.value = layout.zoneBottomRight;
+  if (ytEl && layout.youtubeUrl) ytEl.value = layout.youtubeUrl;
+  if (b1name && layout.iban) b1name.value = layout.iban.bank1Name || '';
+  if (b1iban && layout.iban) b1iban.value = layout.iban.bank1Iban || '';
+  if (b2name && layout.iban) b2name.value = layout.iban.bank2Name || '';
+  if (b2iban && layout.iban) b2iban.value = layout.iban.bank2Iban || '';
+  if (accName && layout.iban) accName.value = layout.iban.accountName || '';
+
+  updateLayoutPreview();
+}
+
+window.updateLayoutPreview = function() {
+  const leftVal = document.getElementById('layout-zone-left')?.value || 'sarrafiye';
+  const topVal = document.getElementById('layout-zone-topright')?.value || 'gram';
+  const botVal = document.getElementById('layout-zone-bottomright')?.value || 'altin';
+
+  const leftLabel = document.getElementById('preview-left-label');
+  const topLabel = document.getElementById('preview-topright-label');
+  const botLabel = document.getElementById('preview-bottomright-label');
+
+  if (leftLabel) leftLabel.textContent = WIDGET_LABELS[leftVal] || leftVal;
+  if (topLabel) topLabel.textContent = WIDGET_LABELS[topVal] || topVal;
+  if (botLabel) botLabel.textContent = WIDGET_LABELS[botVal] || botVal;
+
+  // Önizleme bölgelerini renklendir
+  const zones = [
+    { el: document.getElementById('preview-zone-left'), val: leftVal },
+    { el: document.getElementById('preview-zone-topright'), val: topVal },
+    { el: document.getElementById('preview-zone-bottomright'), val: botVal }
+  ];
+  const colors = {
+    sarrafiye: '#C8971A',
+    gram: '#2196F3',
+    altin: '#9C27B0',
+    iban: '#4CAF50',
+    youtube: '#F44336',
+    gizli: '#555'
+  };
+  zones.forEach(({ el, val }) => {
+    if (el) el.style.borderColor = colors[val] || 'var(--border)';
+  });
+};
+
+window.saveLayoutSettings = function() {
+  const leftVal = document.getElementById('layout-zone-left')?.value || 'sarrafiye';
+  const topVal = document.getElementById('layout-zone-topright')?.value || 'gram';
+  const botVal = document.getElementById('layout-zone-bottomright')?.value || 'altin';
+  const ytUrl = document.getElementById('youtube-url-input')?.value || '';
+  const b1name = document.getElementById('iban-bank1-name')?.value || '';
+  const b1iban = document.getElementById('iban-bank1-iban')?.value || '';
+  const b2name = document.getElementById('iban-bank2-name')?.value || '';
+  const b2iban = document.getElementById('iban-bank2-iban')?.value || '';
+  const accName = document.getElementById('iban-account-name')?.value || '';
+
+  const layoutData = {
+    zoneLeft: leftVal,
+    zoneTopRight: topVal,
+    zoneBottomRight: botVal,
+    youtubeUrl: ytUrl,
+    iban: {
+      bank1Name: b1name,
+      bank1Iban: b1iban,
+      bank2Name: b2name,
+      bank2Iban: b2iban,
+      accountName: accName
+    }
+  };
+
+  db.ref('config/tvLayout').set(layoutData)
+    .then(() => showAlert('✅ Ekran düzeni kaydedildi!', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
 };

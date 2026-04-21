@@ -65,6 +65,10 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
                     <span>Görünüm Ayarları</span>
                 </button>
+                <button class="nav-item" onclick="switchSection('section-layout', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="12" y1="9" x2="12" y2="21"></line></svg>
+                    <span>TV Ekran Düzeni</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -242,6 +246,136 @@
                     </div>
                 </div>
             </div>
+            <!-- 4. TV EKRAN DÜZENİ -->
+            <div id="section-layout" class="content-section">
+                <div class="page-header">
+                    <h1>TV Ekran Düzeni</h1>
+                    <p>Televizyon ekranındaki 3 bölgeye ne gösterileceğini seçin.</p>
+                </div>
+
+                <!-- GÖRSEL ÖN İZLEME -->
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3>📺 Ekran Önizlemesi</h3>
+                    </div>
+                    <div class="tv-preview-grid">
+                        <div class="tv-preview-zone" id="preview-zone-left">
+                            <span class="zone-label">Sol Kolon</span>
+                            <span class="zone-content-label" id="preview-left-label">Sarrafiye</span>
+                        </div>
+                        <div class="tv-preview-right">
+                            <div class="tv-preview-zone" id="preview-zone-topright">
+                                <span class="zone-label">Sağ Üst</span>
+                                <span class="zone-content-label" id="preview-topright-label">Gram Altın</span>
+                            </div>
+                            <div class="tv-preview-zone" id="preview-zone-bottomright">
+                                <span class="zone-label">Sağ Alt</span>
+                                <span class="zone-content-label" id="preview-bottomright-label">Altın Fiyatları</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BÖLGE AYARLARI -->
+                <div class="admin-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3>Bölge Ayarları</h3>
+                    </div>
+                    <div class="layout-zones-grid">
+
+                        <!-- SOL KOLON -->
+                        <div class="layout-zone-card">
+                            <div class="zone-icon">◧</div>
+                            <label class="zone-name">Sol Kolon</label>
+                            <select id="layout-zone-left" class="custom-select" onchange="updateLayoutPreview()">
+                                <option value="sarrafiye">Sarrafiye Tablosu</option>
+                                <option value="gram">Gram Altın Tablosu</option>
+                                <option value="altin">ONS / Has Altın</option>
+                                <option value="iban">IBAN / Banka Bilgileri</option>
+                                <option value="youtube">YouTube Video</option>
+                                <option value="gizli">Gizli (Boş)</option>
+                            </select>
+                        </div>
+
+                        <!-- SAĞ ÜST -->
+                        <div class="layout-zone-card">
+                            <div class="zone-icon">◱</div>
+                            <label class="zone-name">Sağ Üst</label>
+                            <select id="layout-zone-topright" class="custom-select" onchange="updateLayoutPreview()">
+                                <option value="gram">Gram Altın Tablosu</option>
+                                <option value="sarrafiye">Sarrafiye Tablosu</option>
+                                <option value="altin">ONS / Has Altın</option>
+                                <option value="iban">IBAN / Banka Bilgileri</option>
+                                <option value="youtube">YouTube Video</option>
+                                <option value="gizli">Gizli (Boş)</option>
+                            </select>
+                        </div>
+
+                        <!-- SAĞ ALT -->
+                        <div class="layout-zone-card">
+                            <div class="zone-icon">◲</div>
+                            <label class="zone-name">Sağ Alt</label>
+                            <select id="layout-zone-bottomright" class="custom-select" onchange="updateLayoutPreview()">
+                                <option value="altin">ONS / Has Altın</option>
+                                <option value="gram">Gram Altın Tablosu</option>
+                                <option value="sarrafiye">Sarrafiye Tablosu</option>
+                                <option value="iban">IBAN / Banka Bilgileri</option>
+                                <option value="youtube">YouTube Video</option>
+                                <option value="gizli">Gizli (Boş)</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- YOUTUBE LINK -->
+                <div class="admin-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3>🎬 YouTube Video Linki</h3>
+                    </div>
+                    <p class="card-desc">Herhangi bir bölgeye "YouTube Video" seçtiğinizde bu link oynatılır. Normal YouTube linkini yapıştırın (otomatik dönüştürülür).</p>
+                    <div class="input-with-action" style="margin-top: 12px;">
+                        <input type="text" id="youtube-url-input" placeholder="https://www.youtube.com/watch?v=..." style="flex:1; font-size:0.85rem;">
+                    </div>
+                    <small style="color: var(--text-muted); margin-top: 6px; display:block;">Örnek: https://www.youtube.com/watch?v=dQw4w9WgXcQ</small>
+                </div>
+
+                <!-- IBAN BİLGİLERİ -->
+                <div class="admin-card" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3>🏦 IBAN / Banka Bilgileri</h3>
+                    </div>
+                    <p class="card-desc">Herhangi bir bölgeye "IBAN / Banka Bilgileri" seçtiğinizde bu bilgiler gösterilir.</p>
+                    <div class="settings-grid" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label>Banka Adı 1</label>
+                            <input type="text" id="iban-bank1-name" placeholder="Örn: Ziraat Bankası">
+                        </div>
+                        <div class="input-group">
+                            <label>IBAN 1</label>
+                            <input type="text" id="iban-bank1-iban" placeholder="TR00 0000 0000 0000 0000 0000 00">
+                        </div>
+                        <div class="input-group">
+                            <label>Banka Adı 2</label>
+                            <input type="text" id="iban-bank2-name" placeholder="Örn: Halkbank">
+                        </div>
+                        <div class="input-group">
+                            <label>IBAN 2</label>
+                            <input type="text" id="iban-bank2-iban" placeholder="TR00 0000 0000 0000 0000 0000 00">
+                        </div>
+                        <div class="input-group">
+                            <label>Hesap Sahibi</label>
+                            <input type="text" id="iban-account-name" placeholder="Örn: Altın Pınarı Kuyumculuk">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KAYDET BUTONU -->
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+                    <button class="btn-primary" style="padding: 14px 40px; font-size: 1rem;" onclick="saveLayoutSettings()">💾 Düzeni Kaydet</button>
+                </div>
+            </div>
+
         </main>
     </div>
 
