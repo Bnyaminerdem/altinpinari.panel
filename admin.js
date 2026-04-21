@@ -324,7 +324,15 @@ window.switchSection = function(sectionId, navElement) {
   }
 
   // Menü öğelerini güncelle (aktif sınıfı)
-  document.querySelectorAll('.nav-item').forEach(// --- TV Layout Yönetimi ---
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  if (navElement) {
+    navElement.classList.add('active');
+  }
+};
+
+// --- TV Layout Yönetimi ---
 const WIDGET_LABELS = {
   sarrafiye: 'Sarrafiye (Birleşik)',
   eskisarrafiye: 'Eski Sarrafiye',
@@ -423,9 +431,5 @@ window.saveLayoutSettings = function() {
 
   db.ref('config/tvLayout').set(layoutData)
     .then(() => showAlert('✅ Ekran düzeni kaydedildi!', 'success'))
-    .catch(err => showAlert('Hata: ' + err.message, 'error'));
-};
-
-hen(() => showAlert('✅ Ekran düzeni kaydedildi!', 'success'))
     .catch(err => showAlert('Hata: ' + err.message, 'error'));
 };
