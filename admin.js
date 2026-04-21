@@ -364,6 +364,8 @@ function loadLayoutSettings(layout) {
   if (topEl) topEl.value = layout.zoneTopRight   || 'gram';
   if (botEl) botEl.value = layout.zoneBottomRight || 'altin';
   if (ytEl && layout.youtubeUrl) ytEl.value = layout.youtubeUrl;
+  const ytSizeEl = document.getElementById('youtube-size-select');
+  if (ytSizeEl && layout.youtubeSize) ytSizeEl.value = layout.youtubeSize;
   if (layout.iban) {
     if (b1name) b1name.value = layout.iban.bank1Name  || '';
     if (b1iban) b1iban.value = layout.iban.bank1Iban  || '';
@@ -426,6 +428,7 @@ window.saveLayoutSettings = function() {
     zoneTopRight:   topVal,
     zoneBottomRight: botVal,
     youtubeUrl: ytUrl,
+    youtubeSize: document.getElementById('youtube-size-select')?.value || '300',
     iban: { bank1Name: b1name, bank1Iban: b1iban, bank2Name: b2name, bank2Iban: b2iban, accountName: accName }
   };
 
