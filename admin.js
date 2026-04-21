@@ -324,106 +324,108 @@ window.switchSection = function(sectionId, navElement) {
   }
 
   // Menü öğelerini güncelle (aktif sınıfı)
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  if (navElement) {
-    navElement.classList.add('active');
-  }
-};
-
-// --- TV Layout Yönetimi ---
+  document.querySelectorAll('.nav-item').forEach(// --- TV Layout Yönetimi ---
 const WIDGET_LABELS = {
-  sarrafiye: 'Sarrafiye Tablosu',
-  gram: 'Gram Altın Tablosu',
+  sarrafiye: 'Sarrafiye (Birleşik)',
+  eskisarrafiye: 'Eski Sarrafiye',
+  yenisarrafiye: 'Yeni Sarrafiye',
+  gram: 'Gram Altın',
   altin: 'ONS / Has Altın',
-  iban: 'IBAN / Banka Bilgileri',
-  youtube: 'YouTube Video',
-  gizli: 'Gizli (Boş)'
+  iban: 'IBAN / Banka',
+  youtube: 'YouTube',
+  gizli: 'Gizli'
 };
 
 function loadLayoutSettings(layout) {
-  const leftEl = document.getElementById('layout-zone-left');
+  const ltEl  = document.getElementById('layout-zone-lefttop');
+  const lbEl  = document.getElementById('layout-zone-leftbottom');
   const topEl = document.getElementById('layout-zone-topright');
   const botEl = document.getElementById('layout-zone-bottomright');
-  const ytEl = document.getElementById('youtube-url-input');
+  const ytEl  = document.getElementById('youtube-url-input');
   const b1name = document.getElementById('iban-bank1-name');
   const b1iban = document.getElementById('iban-bank1-iban');
   const b2name = document.getElementById('iban-bank2-name');
   const b2iban = document.getElementById('iban-bank2-iban');
   const accName = document.getElementById('iban-account-name');
 
-  if (leftEl && layout.zoneLeft) leftEl.value = layout.zoneLeft;
-  if (topEl && layout.zoneTopRight) topEl.value = layout.zoneTopRight;
-  if (botEl && layout.zoneBottomRight) botEl.value = layout.zoneBottomRight;
+  // Geriye dönük uyumluluk: eski kaydedilmiş 'zoneLeft' → 'zoneLeftTop'
+  const savedLeftTop = layout.zoneLeftTop || layout.zoneLeft || 'sarrafiye';
+
+  if (ltEl)  ltEl.value  = savedLeftTop;
+  if (lbEl)  lbEl.value  = layout.zoneLeftBottom || 'yenisarrafiye';
+  if (topEl) topEl.value = layout.zoneTopRight   || 'gram';
+  if (botEl) botEl.value = layout.zoneBottomRight || 'altin';
   if (ytEl && layout.youtubeUrl) ytEl.value = layout.youtubeUrl;
-  if (b1name && layout.iban) b1name.value = layout.iban.bank1Name || '';
-  if (b1iban && layout.iban) b1iban.value = layout.iban.bank1Iban || '';
-  if (b2name && layout.iban) b2name.value = layout.iban.bank2Name || '';
-  if (b2iban && layout.iban) b2iban.value = layout.iban.bank2Iban || '';
-  if (accName && layout.iban) accName.value = layout.iban.accountName || '';
+  if (layout.iban) {
+    if (b1name) b1name.value = layout.iban.bank1Name  || '';
+    if (b1iban) b1iban.value = layout.iban.bank1Iban  || '';
+    if (b2name) b2name.value = layout.iban.bank2Name  || '';
+    if (b2iban) b2iban.value = layout.iban.bank2Iban  || '';
+    if (accName) accName.value = layout.iban.accountName || '';
+  }
 
   updateLayoutPreview();
 }
 
 window.updateLayoutPreview = function() {
-  const leftVal = document.getElementById('layout-zone-left')?.value || 'sarrafiye';
-  const topVal = document.getElementById('layout-zone-topright')?.value || 'gram';
+  const ltVal  = document.getElementById('layout-zone-lefttop')?.value    || 'sarrafiye';
+  const lbVal  = document.getElementById('layout-zone-leftbottom')?.value || 'yenisarrafiye';
+  const topVal = document.getElementById('layout-zone-topright')?.value   || 'gram';
   const botVal = document.getElementById('layout-zone-bottomright')?.value || 'altin';
 
-  const leftLabel = document.getElementById('preview-left-label');
+  const ltLabel  = document.getElementById('preview-lefttop-label');
+  const lbLabel  = document.getElementById('preview-leftbottom-label');
   const topLabel = document.getElementById('preview-topright-label');
   const botLabel = document.getElementById('preview-bottomright-label');
 
-  if (leftLabel) leftLabel.textContent = WIDGET_LABELS[leftVal] || leftVal;
+  if (ltLabel)  ltLabel.textContent  = WIDGET_LABELS[ltVal]  || ltVal;
+  if (lbLabel)  lbLabel.textContent  = WIDGET_LABELS[lbVal]  || lbVal;
   if (topLabel) topLabel.textContent = WIDGET_LABELS[topVal] || topVal;
   if (botLabel) botLabel.textContent = WIDGET_LABELS[botVal] || botVal;
 
-  // Önizleme bölgelerini renklendir
-  const zones = [
-    { el: document.getElementById('preview-zone-left'), val: leftVal },
-    { el: document.getElementById('preview-zone-topright'), val: topVal },
-    { el: document.getElementById('preview-zone-bottomright'), val: botVal }
-  ];
   const colors = {
-    sarrafiye: '#C8971A',
-    gram: '#2196F3',
-    altin: '#9C27B0',
-    iban: '#4CAF50',
-    youtube: '#F44336',
-    gizli: '#555'
+    sarrafiye: '#C8971A', eskisarrafiye: '#b8731a', yenisarrafiye: '#d4a843',
+    gram: '#2196F3', altin: '#9C27B0',
+    iban: '#4CAF50', youtube: '#F44336', gizli: '#555'
   };
-  zones.forEach(({ el, val }) => {
+
+  [
+    { id: 'preview-zone-lefttop',    val: ltVal },
+    { id: 'preview-zone-leftbottom', val: lbVal },
+    { id: 'preview-zone-topright',   val: topVal },
+    { id: 'preview-zone-bottomright', val: botVal }
+  ].forEach(({ id, val }) => {
+    const el = document.getElementById(id);
     if (el) el.style.borderColor = colors[val] || 'var(--border)';
   });
 };
 
 window.saveLayoutSettings = function() {
-  const leftVal = document.getElementById('layout-zone-left')?.value || 'sarrafiye';
-  const topVal = document.getElementById('layout-zone-topright')?.value || 'gram';
+  const ltVal  = document.getElementById('layout-zone-lefttop')?.value    || 'sarrafiye';
+  const lbVal  = document.getElementById('layout-zone-leftbottom')?.value || 'yenisarrafiye';
+  const topVal = document.getElementById('layout-zone-topright')?.value   || 'gram';
   const botVal = document.getElementById('layout-zone-bottomright')?.value || 'altin';
-  const ytUrl = document.getElementById('youtube-url-input')?.value || '';
-  const b1name = document.getElementById('iban-bank1-name')?.value || '';
-  const b1iban = document.getElementById('iban-bank1-iban')?.value || '';
-  const b2name = document.getElementById('iban-bank2-name')?.value || '';
-  const b2iban = document.getElementById('iban-bank2-iban')?.value || '';
+  const ytUrl  = document.getElementById('youtube-url-input')?.value      || '';
+  const b1name = document.getElementById('iban-bank1-name')?.value  || '';
+  const b1iban = document.getElementById('iban-bank1-iban')?.value  || '';
+  const b2name = document.getElementById('iban-bank2-name')?.value  || '';
+  const b2iban = document.getElementById('iban-bank2-iban')?.value  || '';
   const accName = document.getElementById('iban-account-name')?.value || '';
 
   const layoutData = {
-    zoneLeft: leftVal,
-    zoneTopRight: topVal,
+    zoneLeftTop:    ltVal,
+    zoneLeftBottom: lbVal,
+    zoneTopRight:   topVal,
     zoneBottomRight: botVal,
     youtubeUrl: ytUrl,
-    iban: {
-      bank1Name: b1name,
-      bank1Iban: b1iban,
-      bank2Name: b2name,
-      bank2Iban: b2iban,
-      accountName: accName
-    }
+    iban: { bank1Name: b1name, bank1Iban: b1iban, bank2Name: b2name, bank2Iban: b2iban, accountName: accName }
   };
 
   db.ref('config/tvLayout').set(layoutData)
     .then(() => showAlert('✅ Ekran düzeni kaydedildi!', 'success'))
+    .catch(err => showAlert('Hata: ' + err.message, 'error'));
+};
+
+hen(() => showAlert('✅ Ekran düzeni kaydedildi!', 'success'))
     .catch(err => showAlert('Hata: ' + err.message, 'error'));
 };
